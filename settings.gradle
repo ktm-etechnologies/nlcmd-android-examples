@@ -1,0 +1,3 @@
+rootProject.name='nlcmd_easy_example'
+include ':app', ':nlcmd'
+project(':nlcmd').projectDir = new File('app/libs/nlcmd/nlcmd')
