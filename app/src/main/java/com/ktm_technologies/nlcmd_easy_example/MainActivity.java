@@ -11,34 +11,58 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.ktm_technologies.nlcmd.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     Log log;
+    TextView resView;
+    Button butSpeak;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Nlcmd.action(new String[]{"hallo und willkommen"}, new ActionLambda() {
+        resView=findViewById(R.id.ResultView);
+        butSpeak=findViewById(R.id.ButSpeak);
+        Nlcmd.action(new String[]{"hallo und willkommen"}, new ScanLambda() {
             @Override
-            public boolean run() {
-                log.d("markov","hello");
-                return true;
+            public void run(HashMap<List<String>, Double> matches, HashMap<String, List<String>> placeholders) {
+                log.d("markov","p1");
+                resView.setText("Phrase 1");
             }
         });
-        Nlcmd.action(new String[]{"Das ist ein Test"}, new ActionLambda() {
+        Nlcmd.action(new String[]{"was ist hier los"}, new ScanLambda() {
             @Override
-            public boolean run() {
-                log.d("markov","Das ist ein Test");
-                return true;
+            public void run(HashMap<List<String>, Double> matches, HashMap<String, List<String>> placeholders) {
+                log.d("markov","p2");
+                resView.setText("Phrase 2");
             }
         });
-        SpeechInput();
+        Nlcmd.action(new String[]{"das ist ein Test"},  new ScanLambda() {
+            @Override
+            public void run(HashMap<List<String>, Double> matches, HashMap<String, List<String>> placeholders) {
+                log.d("markov","p3");
+                resView.setText("Phrase 3");
+            }
+        });
+        butSpeak.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SpeechInput();
+            }
+        });
+       // Nlcmd.scan("das ist ein Test");
+        //Nlcmd.scan("was ist hier los");
+        //Nlcmd.scan("das ist ein Test");
 
     }
 
@@ -58,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 10) {
             if (resultCode == RESULT_OK && data != null) {
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                Nlcmd.scan((Arrays.asList(result.get(0).split(("")))));
+                log.d("input",result.get(0));
+                Nlcmd.scan(result.get(0));
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
